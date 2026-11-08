@@ -103,3 +103,34 @@ describe("users", () => {
     expect(list.payload).not.toContain("bob@example.com");
   });
 });
+
+describe("users search", () => {
+  it("находит по части имени", async () => {
+    const res = await app.inject({ method: "GET", url: "/users?query=adm" });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.payload).toContain("admin@example.com");
+  });
+
+  it("находит по емейлу без учёта регистра", async () => {
+    const res = await app.inject({ method: "GET", url: "/users?query=EXAMPLE" });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.payload).toContain("admin@example.com");
+  });
+
+  it("показывает пустой результат, если совпадений нет", async () => {
+    const res = await app.inject({ method: "GET", url: "/users?query=nobody" });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.payload).not.toContain("admin@example.com");
+    expect(res.payload).toContain("Ничего не найдено");
+  });
+
+  it("возвращает всех пользователей при пустом запросе", async () => {
+    const res = await app.inject({ method: "GET", url: "/users?query=" });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.payload).toContain("admin@example.com");
+  });
+});

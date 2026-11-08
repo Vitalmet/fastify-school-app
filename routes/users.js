@@ -15,10 +15,15 @@ export default async (app, _opts) => {
   const { db } = app;
 
   // Просмотр списка пользователей
-  app.get("/users", { name: "users" }, async (_req, res) => {
-    const { rows: users } = await db.query("SELECT * FROM users");
+  app.get("/users", { name: "users" }, async (req, res) => {
+    const raw = req.query.query;
+    const query = typeof raw === "string" ? raw.trim() : "";
 
-    return res.view("users/index", { users, flash: res.flash() });
+    const { rows: users } = query
+      ? await db.query("SELECT * FROM users WHERE name ILIKE $1 OR email ILIKE $1", [`%${query}%`])
+      : await db.query("SELECT * FROM users");
+
+    return res.view("users/index", { users, query, flash: res.flash() });
   });
 
   // Форма создания нового пользователя
