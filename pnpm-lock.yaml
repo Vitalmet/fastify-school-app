@@ -185,8 +185,8 @@ importers:
         specifier: ^8.4.1
         version: 8.4.1(bare-events@2.9.2)
       '@fastify/static':
-        specifier: ^10.1.7
-        version: 10.1.7
+        specifier: ^10.1.10
+        version: 10.1.10
       '@fastify/view':
         specifier: ^12.0.1
         version: 12.0.1
@@ -273,11 +273,14 @@ packages:
   '@fastify/send@4.2.0':
     resolution: {integrity: sha512-B5Hr+IFsPbqJJQu6FHE2MFpnHfbPlCOVQUPTdm6PxCcilYGrEQsulbO0z9blgbjndIyLJwa2NWFIIjXpPhbwUg==}
 
-  '@fastify/static@10.1.7':
-    resolution: {integrity: sha512-7+lUiPRraENCiULgjhcqZyWSW6qnwIT87Is0u3c2Z3iGEEEGB45wJhYxzrSdzu12gHM4qcviEYcPEiCe4J6MCQ==}
+  '@fastify/static@10.1.10':
+    resolution: {integrity: sha512-CGwOoZiKg5m4SAqeiS8bzCSKDa71DMFQ7QeVsuWBOrfFu32DpVZWFFb0cpEg7e54YK6HZZsl4g/wfoKMnRQMUw==}
 
   '@fastify/view@12.0.1':
     resolution: {integrity: sha512-f5iQVXSUVtWIJ+DfGzQ+hoD6390X2QRibmOfs4LxToxupmAMz4bnHnEQoE4VMqL+yqRlsKY17gOW0CEL5W0HKg==}
+
+  '@isaacs/nonrecursive-glob-match@1.1.0':
+    resolution: {integrity: sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -1024,8 +1027,8 @@ packages:
     resolution: {integrity: sha512-b4cVhbPfbgbCZtK0dcUc1lASitXGEAIqukV5DDAyWm25fomWnV+C+a1yXvqikcRZXHN2j0pSDyj3cTfzq8pC7Q==}
     hasBin: true
 
-  glob@13.0.6:
-    resolution: {integrity: sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==}
+  glob@14.0.4:
+    resolution: {integrity: sha512-mMiwNKoJZ4HAIRVJxotO6LsNRReA30gQwP9E2/p94tfLv+jygCNpKDjhhSL6OLY6LE371EZm5EAf7RpYuUqlsw==}
     engines: {node: 18 || 20 || >=22}
 
   graceful-fs@4.2.11:
@@ -1238,9 +1241,9 @@ packages:
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  minimatch@10.2.6:
-    resolution: {integrity: sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==}
-    engines: {node: 18 || 20 || >=22}
+  minimatch@11.0.5:
+    resolution: {integrity: sha512-snPlVppFcYWfLLFQGhDxUyBcHNtMlWmn3jtj7pEaO+DP8pqL0IvAzXhMYmn1z9ASNtgmwLBdFxSf4tMUB0OTKA==}
+    engines: {node: 20 || >=22}
 
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
@@ -1306,8 +1309,8 @@ packages:
     resolution: {integrity: sha512-RjhtfwJOxzcFmNOi6ltcbcu4Iu+FL3zEj83dk4kAS+fVpTxXLO1b38RvJgT/0QwvV/L3aY9TAnyv0EOqW4GoMQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  path-scurry@2.0.2:
-    resolution: {integrity: sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==}
+  path-scurry@3.0.0:
+    resolution: {integrity: sha512-1pTbQqH1wIwMi/eleQ5leFTTCkzFsPcgXNjwOA8YGGW/W4/kHT3dssE7Z6NH+zuqNLOzOB0uaD61yl7cAcVhgg==}
     engines: {node: 18 || 20 || >=22}
 
   pathe@2.0.3:
@@ -1695,7 +1698,7 @@ snapshots:
       http-errors: 2.0.1
       mime: 3.0.0
 
-  '@fastify/static@10.1.7':
+  '@fastify/static@10.1.10':
     dependencies:
       '@fastify/accept-negotiator': 2.1.2
       '@fastify/error': 4.2.1
@@ -1703,12 +1706,14 @@ snapshots:
       content-disposition: 3.0.0
       fastify-plugin: 6.0.1
       fastq: 1.20.3
-      glob: 13.0.6
+      glob: 14.0.4
 
   '@fastify/view@12.0.1':
     dependencies:
       fastify-plugin: 6.0.1
       toad-cache: 3.7.4
+
+  '@isaacs/nonrecursive-glob-match@1.1.0': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
@@ -2246,11 +2251,11 @@ snapshots:
       split2: 3.2.2
       walker: 1.0.8
 
-  glob@13.0.6:
+  glob@14.0.4:
     dependencies:
-      minimatch: 10.2.6
+      minimatch: 11.0.5
       minipass: 7.1.3
-      path-scurry: 2.0.2
+      path-scurry: 3.0.0
 
   graceful-fs@4.2.11: {}
 
@@ -2403,8 +2408,9 @@ snapshots:
 
   mime@3.0.0: {}
 
-  minimatch@10.2.6:
+  minimatch@11.0.5:
     dependencies:
+      '@isaacs/nonrecursive-glob-match': 1.1.0
       brace-expansion: 5.0.12
 
   minimist@1.2.8: {}
@@ -2477,7 +2483,7 @@ snapshots:
 
   path-exists@5.0.0: {}
 
-  path-scurry@2.0.2:
+  path-scurry@3.0.0:
     dependencies:
       lru-cache: 11.5.3
       minipass: 7.1.3
