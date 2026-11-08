@@ -50,10 +50,19 @@ jobs:
           commitlint --from "$FROM" --to "$TO"
 
       - name: Secrets
-        run: betterleaks git --log-opts="$FROM..$TO" --no-banner .
         env:
           FROM: ${{ github.event.pull_request.base.sha || github.event.before }}
           TO: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          # Первый пуш в репозиторий или ветку: before это нулевой SHA, и
+          # диапазон FROM..TO невалиден. Проверяем последний коммит, как и
+          # commitlint выше: вся история может содержать демо-данные.
+          if [ "$FROM" = "0000000000000000000000000000000000000000" ]; then
+            LOG_OPTS="$TO -1"
+          else
+            LOG_OPTS="$FROM..$TO"
+          fi
+          betterleaks git --log-opts="$LOG_OPTS" --no-banner .
 
       - name: Vulnerabilities
         run: osv-scanner scan source --lockfile pnpm-lock.yaml
