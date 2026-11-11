@@ -23,6 +23,9 @@ describe("assets", () => {
     expect(res.statusCode).toBe(200);
     expect(res.payload).toContain(".max-w-5xl");
     expect(res.payload).toContain(".bg-green-50");
+    // Класс из формы комментариев: ловит случай, когда шаблоны добавили, а
+    // сборку не перезапустили.
+    expect(res.payload).toContain(".border-dashed");
   });
 });
 
