@@ -212,7 +212,8 @@ describe("comments and deleted users", () => {
       ...form({
         name: "bob",
         email: "bob@example.com",
-        password: "secret",
+        // Пароль тестового пользователя, не секрет.
+        password: "secret", // betterleaks:allow
         passwordConfirmation: "secret",
       }),
     });

@@ -24,7 +24,15 @@ const seed = async (db) => {
   const { rows: userCount } = await db.query("SELECT count(*)::int AS count FROM users");
 
   if (userCount[0].count === 0) {
-    const users = [{ name: "admin", email: "admin@example.com", password: "admin" }];
+    // Демо-пользователь для локального запуска: пароль не секрет, входа в
+    // приложении нет. Сканеру секретов значение разрешено явно.
+    const users = [
+      {
+        name: "admin",
+        email: "admin@example.com",
+        password: "admin", // betterleaks:allow
+      },
+    ];
 
     for (const user of users) {
       await db.query("INSERT INTO users (name, email, password) VALUES ($1, $2, $3)", [
