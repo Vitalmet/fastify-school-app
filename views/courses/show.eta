@@ -17,3 +17,12 @@
     </form>
   </div>
 </div>
+
+<%~ include("../partials/comments", {
+  comments: it.comments,
+  users: it.users,
+  entity: "course",
+  entityId: it.course.id,
+  commentBody: it.commentBody,
+  authorId: it.authorId
+}) %>

@@ -1,4 +1,13 @@
 import * as yup from "yup";
+import {
+  COMMENTABLE,
+  commentSchema,
+  createComment,
+  deleteComment,
+  deleteCommentsFor,
+  listComments,
+} from "../lib/comments.js";
+import { listAuthors, userExists } from "../lib/users.js";
 
 const userSchema = {
   body: yup.object({
@@ -13,6 +22,27 @@ const userSchema = {
 
 export default async (app, _opts) => {
   const { db } = app;
+
+  const findUser = async (id) => {
+    const { rows } = await db.query("SELECT * FROM users WHERE id = $1", [id]);
+    return rows[0];
+  };
+
+  // Одна страница пользователя и для просмотра, и для повторного показа формы
+  // после ошибки: значения формы и комментарии собираются в одном месте.
+  const renderUser = async (req, res, user, values = {}) => {
+    const comments = await listComments(db, COMMENTABLE.user, user.id);
+    const users = await listAuthors(db);
+
+    return res.view("users/show", {
+      user,
+      comments,
+      users,
+      commentBody: values.commentBody ?? "",
+      authorId: values.authorId ?? "",
+      flash: res.flash(),
+    });
+  };
 
   // Просмотр списка пользователей
   app.get("/users", { name: "users" }, async (req, res) => {
@@ -33,14 +63,13 @@ export default async (app, _opts) => {
 
   // Просмотр конкретного пользователя
   app.get("/users/:id", { name: "user" }, async (req, res) => {
-    const { rows } = await db.query("SELECT * FROM users WHERE id = $1", [req.params.id]);
-    const user = rows[0];
+    const user = await findUser(req.params.id);
 
     if (!user) {
       return res.code(404).send("User not found");
     }
 
-    return res.view("users/show", { user, flash: res.flash() });
+    return renderUser(req, res, user);
   });
 
   // Создание пользователя
@@ -64,8 +93,7 @@ export default async (app, _opts) => {
 
   // Форма редактирования пользователя
   app.get("/users/:id/edit", { name: "editUser" }, async (req, res) => {
-    const { rows } = await db.query("SELECT * FROM users WHERE id = $1", [req.params.id]);
-    const user = rows[0];
+    const user = await findUser(req.params.id);
 
     if (!user) {
       return res.code(404).send("User not found");
@@ -95,9 +123,60 @@ export default async (app, _opts) => {
     return res.redirect(app.reverse("users"));
   });
 
+  // Добавление комментария к пользователю
+  app.post(
+    "/users/:userId/comments",
+    { name: "userComments", attachValidation: true, schema: commentSchema },
+    async (req, res) => {
+      const user = await findUser(req.params.userId);
+
+      if (!user) {
+        return res.code(404).send("User not found");
+      }
+
+      const { body, authorId } = req.body ?? {};
+
+      if (req.validationError) {
+        req.flash("warning", req.validationError.message);
+        return renderUser(req, res, user, { commentBody: body, authorId });
+      }
+
+      // Синхронный валидатор yup не может сходить в базу, поэтому автора
+      // проверяем отдельно: иначе несуществующий id дал бы 500 на внешнем ключе.
+      if (!(await userExists(db, authorId))) {
+        req.flash("warning", "Выберите автора");
+        return renderUser(req, res, user, { commentBody: body, authorId });
+      }
+
+      await createComment(db, COMMENTABLE.user, user.id, { authorId, body });
+
+      req.flash("success", "Комментарий добавлен");
+      return res.redirect(app.reverse("user", { id: user.id }));
+    },
+  );
+
+  // Удаление комментария пользователя
+  app.delete("/users/:userId/comments/:id", { name: "userComment" }, async (req, res) => {
+    const deleted = await deleteComment(db, COMMENTABLE.user, req.params.userId, req.params.id);
+
+    if (!deleted) {
+      return res.code(404).send("Comment not found");
+    }
+
+    req.flash("success", "Комментарий удален");
+    return res.redirect(app.reverse("user", { id: req.params.userId }));
+  });
+
   // Удаление пользователя
   app.delete("/users/:id", async (req, res) => {
-    await db.query("DELETE FROM users WHERE id = $1", [req.params.id]);
+    const { id } = req.params;
+
+    // Комментарии о пользователе чистим вручную (полиморфная связь), а
+    // комментарии, где он автор, удалит ON DELETE CASCADE на comments.user_id.
+    await db.transaction(async (tx) => {
+      await deleteCommentsFor(tx, COMMENTABLE.user, id);
+      await tx.query("DELETE FROM users WHERE id = $1", [id]);
+    });
 
     req.flash("success", "Пользователь успешно удален");
     return res.redirect(app.reverse("users"));

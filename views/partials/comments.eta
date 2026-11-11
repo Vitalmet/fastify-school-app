@@ -1,0 +1,48 @@
+<%
+  const commentsRoute = it.entity === "course" ? "courseComments" : "userComments";
+  const commentRoute = it.entity === "course" ? "courseComment" : "userComment";
+  const targetParams = it.entity === "course" ? { courseId: it.entityId } : { userId: it.entityId };
+%>
+<section class="mt-8">
+  <h2 class="mb-4 text-xl font-semibold">Комментарии</h2>
+
+  <form class="mb-6 rounded-lg border border-dashed border-gray-300 bg-white p-4" action="<%= it.route(commentsRoute, targetParams) %>" method="post">
+    <div class="mb-3">
+      <label class="mb-1 block text-sm font-medium" for="commentAuthor">Автор</label>
+      <select class="w-full rounded border border-gray-300 px-3 py-2" id="commentAuthor" name="authorId">
+        <option value="">Выберите автора</option>
+        <% it.users.forEach((user) => { %>
+        <option value="<%= user.id %>" <%= String(user.id) === String(it.authorId) ? "selected" : "" %>><%= user.name %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="mb-1 block text-sm font-medium" for="commentBody">Текст комментария</label>
+      <textarea class="w-full rounded border border-gray-300 px-3 py-2" id="commentBody" name="body" rows="3"><%= it.commentBody ?? '' %></textarea>
+    </div>
+
+    <input class="cursor-pointer rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit" value="Добавить">
+  </form>
+
+  <% if (it.comments.length === 0) { %>
+  <p class="rounded-lg border border-gray-200 bg-white p-6 text-gray-600">Комментариев пока нет</p>
+  <% } else { %>
+  <ul class="space-y-3">
+    <% it.comments.forEach((comment) => { %>
+    <li class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <span class="font-medium"><%= comment.author_name %></span>
+          <span class="text-xs text-gray-500"><%= new Date(comment.created_at).toLocaleString("ru-RU") %></span>
+        </div>
+        <form action="<%= it.route(commentRoute, { ...targetParams, id: comment.id }) %>?_method=DELETE" method="post">
+          <input class="cursor-pointer rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700" type="submit" value="Удалить">
+        </form>
+      </div>
+      <p class="whitespace-pre-line"><%= comment.body %></p>
+    </li>
+    <% }) %>
+  </ul>
+  <% } %>
+</section>
