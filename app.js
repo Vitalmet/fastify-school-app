@@ -1,6 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import AutoLoad from "@fastify/autoload";
+import fp from "fastify-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,7 +30,11 @@ export const options = {
   rewriteUrl,
 };
 
-export default async function (fastify, opts) {
+// fastify-cli регистрирует этот файл как обычный плагин, а обычный плагин
+// инкапсулирован: декоратор db остался бы внутри и не был бы виден корневому
+// инстансу, который возвращает fastify-cli/helper в тестах. Обёртка
+// fastify-plugin убирает эту границу.
+export default fp(async function (fastify, opts) {
   await fastify.register(AutoLoad, {
     dir: path.join(__dirname, "plugins"),
     options: { ...opts },
@@ -39,4 +44,4 @@ export default async function (fastify, opts) {
     dir: path.join(__dirname, "routes"),
     options: { ...opts },
   });
-}
+});
